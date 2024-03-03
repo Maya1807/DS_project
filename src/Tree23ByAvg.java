@@ -1,0 +1,67 @@
+public class Tree23ByAvg<T> {
+    NodeMin<T> root;
+    int size;
+
+    public void init(Tree23<T> Tree){
+        //implement from 45
+        //O(1)
+    }
+
+    public NodeMin<T> search(NodeMin<T> x, T key){
+        //implement from 45
+        //O(lg(n))
+        return null;
+    }
+
+    public NodeMin<T> minimumAvg(){
+        //implement from 46
+        //O(lg(n))
+        return null;
+    }
+    public NodeMin<T> minimumMinRun(){
+        return null;
+    }
+
+
+    public void setChildren(NodeMin<T> x, NodeMin<T> l,NodeMin<T> m,NodeMin<T> r){
+        //implement from 47
+        //O(lg(n))
+        return;
+    }
+    public void insertAndSplit(NodeMin<T> x, NodeMin<T> z){
+        //implement from 48
+        //O(lg(n))
+        return;
+    }
+
+    public void insert(NodeMin<T> z){
+        //implement from 49
+        //O(lg(n))
+        size++;
+        return;
+    }
+
+    public void borrowOrMerge(NodeMin<T> y){
+        //implement from 48
+        //O(lg(n))
+        return;
+    }
+
+    public void delete(NodeMin<T> x){
+        //implement from 51
+        //O(lg(n))
+        size--;
+        return;
+    }
+
+    public int rank(NodeMin<T> x){
+        int rank = 1;
+        //implement from tutorial 6 , 14
+        return 0;
+    }
+
+
+
+}
+
+
