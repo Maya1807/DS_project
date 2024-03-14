@@ -64,6 +64,9 @@ public class Node<T extends RunnerID> {
     public void setSize(int size) {
         this.size = size;
     }
+    public Runner getData(){
+        return data;
+    }
 
     public boolean isSmaller(Node<T> other){
         return this.key.isSmaller(other.getKey());

@@ -2,23 +2,60 @@ public class Tree23<T extends RunnerID> {
     Node<T> root;
     int size;
 
-    public Tree23(){//m
-        //implement from 45
-        //O(1)
-        this.root = null;
+    public Tree23(T maxKey, T minKey){//m done
+        this.init(maxKey, minKey);
         this.size = 0;
     }
 
-    public Node<T> search(Node<T> x, T key){//m
-        //implement from 45
-        //O(lg(n))
-        return null;
+    public void init(T maxKey, T minKey){
+        Node<T> x = new Node<>();
+        Node<T> left = new Node<>();
+        Node<T> middle = new Node<>();
+        left.setKey(minKey);
+        middle.setKey(maxKey);
+        left.setParent(x);
+        middle.setParent(x);
+        x.setKey(maxKey);
+        x.setLeft(left);
+        x.setMiddle(middle);
+        this.root = x;
     }
 
-    public Node<T> minimum(){//m
-        //implement from 46
-        //O(lg(n))
-        return null;
+
+
+    public Node<T> search(Node<T> x, T key){//m done
+        if (x.getLeft() == null && x.getMiddle() == null){
+            if(x.getKey() == key){
+                return x;
+            }
+            else{
+                return null;
+            }
+        }
+            if (key.isSmaller(x.getLeft().getKey())){
+            return search(x.getLeft(), key);
+        } else if (key.isSmaller(x.getMiddle().getKey())) {
+            return search(x.getMiddle(), key);
+        }
+        else{
+            return search(x.getRight(), key);
+        }
+    }
+
+    public Node<T> minimum(T maxKey){//m done
+        Node x = this.root;
+        while (!(x.getLeft() == null && x.getMiddle() == null)){
+            x = x.getLeft();
+        }
+        x = x.getParent().getMiddle();
+        if(x.getKey() != maxKey){
+            return x;
+        }
+        else{
+            return null;
+            //error: T is empty
+            //throw error?
+        }
     }
 
     public void updateKey(Node<T> x){//h done
@@ -180,9 +217,19 @@ public class Tree23<T extends RunnerID> {
         size--;
     }
 
-    public int rank(Node<T> x){//m
-        //implement from tutorial 6 , 14
-        return -1;
+    public int rank(Node<T> x){//m done
+        int rank = 1;
+        Node y = x.getParent();
+        while(y != null){
+            if(x == y.getMiddle()){
+                rank = rank + y.getLeft().getSize();
+            } else if (x == y.getRight()) {
+                rank = rank + y.getLeft().getSize() + y.getMiddle().getSize();
+            }
+            x = y;
+            y = y.getParent();
+        }
+        return rank;
     }
 
 

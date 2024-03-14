@@ -2,7 +2,7 @@ public class Tree23ByAvg<T> {  //////// dont use - delete after Tree23 works for
     NodeMin<T> root;
     int size;
 
-    public void init(Tree23<T> Tree){ //m
+    public void init(Tree23 Tree){ //m
         //implement from 45
         //O(1)
     }
@@ -63,5 +63,3 @@ public class Tree23ByAvg<T> {  //////// dont use - delete after Tree23 works for
 
 
 }
-
-

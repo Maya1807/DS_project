@@ -22,7 +22,7 @@ public class RunnerMinRun extends RunnerID{
     @Override
     public boolean isSmaller(RunnerID other) {
         //if (other.getClass() != this.getClass()){
-            //throw new IllegalArgumentException("illegal compare isSmaller");
+        //throw new IllegalArgumentException("illegal compare isSmaller");
         //}
         if (this.minRun == ((RunnerMinRun)other).getMinRun()){
             return this.id.isSmaller(((RunnerMinRun)other).getId());
@@ -36,4 +36,3 @@ public class RunnerMinRun extends RunnerID{
     }
 
 }
-

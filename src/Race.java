@@ -1,5 +1,6 @@
 public class Race {
-    private Tree23<RunnerID> runnersByID;
+    //private Tree23<RunnerIDInt> runnersByID;
+    private Tree23<RunnerIDInt> runnersByID;
     //NodeMin<RunnerID> minByAvg;
     //NodeMin<RunnerID> minByMin;
     private Tree23<RunnerMinRun> runnersByMin;
@@ -7,47 +8,80 @@ public class Race {
     private RunnerMinRun minRunByMin;
     private RunnerAvgRun minRunByAvg;
 
+
     public Race()
     {
-        runnersByID = new Tree23<RunnerID>();
-        runnersByMin = new Tree23<RunnerMinRun>();
-        runnersByAvg = new Tree23<RunnerAvgRun>();
+        RunnerIDInt maxKey_RunnerIDInt = new RunnerIDInt(Integer.MAX_VALUE);
+        RunnerIDInt minKey_RunnerIDInt = new RunnerIDInt(Integer.MIN_VALUE);
+        RunnerMinRun maxKey_RunnerMinRun = new RunnerMinRun(Float.MAX_VALUE, null);
+        RunnerMinRun minKey_RunnerMinRun = new RunnerMinRun(Float.MIN_VALUE, null);
+        RunnerAvgRun maxKey_RunnerAvgRun = new RunnerAvgRun(Float.MAX_VALUE, null);
+        RunnerAvgRun minKey_RunnerAvgRun = new RunnerAvgRun(Float.MIN_VALUE, null);
+
+        runnersByID = new Tree23<RunnerIDInt>(maxKey_RunnerIDInt, minKey_RunnerIDInt);
+        runnersByMin = new Tree23<RunnerMinRun>(maxKey_RunnerMinRun, minKey_RunnerMinRun);
+        runnersByAvg = new Tree23<RunnerAvgRun>(maxKey_RunnerAvgRun, minKey_RunnerAvgRun);
         minRunByMin = new RunnerMinRun(Float.MIN_VALUE, null);
         minRunByAvg = new RunnerAvgRun(Float.MIN_VALUE, null);
     }
     public void addRunner(RunnerID id)
     {
-        //implement insert (from 49)
-        NodeMin<RunnerID> node = new NodeMin<>(id);
-        runners.insert(node);
-        if( ((RunnerIDInt)id).getMinRun() < ((RunnerIDInt)minByMin.key).getMinRun()){
-            minByMin = node;
-        }
-        if( ((RunnerIDInt)id).getAvg() < ((RunnerIDInt)minByAvg.key).getAvg()){
-            minByAvg = node;
-        }
+        addRunnerToTree(runnersByID, id);
+        addRunnerToTree(runnersByAvg, id);
+        addRunnerToTree(runnersByMin, id);
+
+
+    }
+    private void addRunnerToTree(Tree23 tree, RunnerID id){
+//        //implement insert (from 49)
+//        NodeMin<RunnerID> node = new NodeMin<>(id);
+//        runners.insert(node);
+//        if( ((RunnerIDInt)id).getMinRun() < ((RunnerIDInt)minByMin.key).getMinRun()){
+//            minByMin = node;
+//        }
+//        if( ((RunnerIDInt)id).getAvg() < ((RunnerIDInt)minByAvg.key).getAvg()){
+//            minByAvg = node;
+//        }
+        Node idNode = tree.search(tree.root, id);
+        tree.insert(idNode);
 
     }
 
     public void removeRunner(RunnerID id)
     {
-        NodeMin<RunnerID> node = runners.search(runners.root, id);
-        runners.delete(node);
+//        NodeMin<RunnerID> node = runners.search(runners.root, id);
+//        runners.delete(node);
+//
+//        //finding the new min if current min deleted
+//        if(minByAvg.key == id){
+//            minByAvg = runners.minimumAvg();
+//        }
+//        if(minByMin.key == id){
+//            minByMin = runners.minimumMinRun();
+//        }
+        removeRunnerFromTree(runnersByID, id);
+        removeRunnerFromTree(runnersByAvg, id);
+        removeRunnerFromTree(runnersByMin, id);
+    }
 
-        //finding the new min if current min deleted
-        if(minByAvg.key == id){
-            minByAvg = runners.minimumAvg();
-        }
-        if(minByMin.key == id){
-            minByMin = runners.minimumMinRun();
-        }
-
+    private void removeRunnerFromTree(Tree23 tree, RunnerID id){
+        Node idNode = tree.search(tree.root, id);
+        tree.delete(idNode);
     }
 
     public void addRunToRunner(RunnerID id, float time)
     {
-        NodeMin<RunnerID> node = runners.search(runners.root, id);
-        ((RunnerIDInt) node.key).addRun(time);
+//        NodeMin<RunnerID> node = runners.search(runners.root, id);
+//        ((RunnerIDInt) node.key).addRun(time);
+        addRunToRunnerTreeSpecific(runnersByID, id, time);
+        addRunToRunnerTreeSpecific(runnersByAvg, id, time);
+        addRunToRunnerTreeSpecific(runnersByMin, id, time);
+
+    }
+    private void addRunToRunnerTreeSpecific(Tree23 tree, RunnerID id, float time){
+        Node runnerNode = tree.search(tree.root, id);
+        Node newRun = new Node(runnerNode.getKey() ,runnerNode.getData(), null);
+        runnerNode.getData().getRuns().insert(newRun);
     }
 
     public void removeRunFromRunner(RunnerID id, float time)
@@ -72,7 +106,7 @@ public class Race {
     }
     public float getAvgRun(RunnerID id){
 
-       return ((RunnerIDInt)id).getAvg();
+        return ((RunnerIDInt)id).getAvg();
     }
 
     public int getRankAvg(RunnerID id)
