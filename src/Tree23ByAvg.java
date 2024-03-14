@@ -1,4 +1,4 @@
-public class Tree23ByAvg<T> {
+public class Tree23ByAvg<T> {  //////// dont use - delete after Tree23 works for everything
     NodeMin<T> root;
     int size;
 

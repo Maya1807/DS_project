@@ -1,4 +1,4 @@
-public class NodeMin<T> {
+public class NodeMin<T> { ////// dont use - delete after node works
     T key;
     Node parent;
     Node left;

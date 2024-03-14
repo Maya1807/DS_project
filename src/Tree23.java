@@ -1,4 +1,4 @@
-public class Tree23<T> {
+public class Tree23<T extends RunnerID> {
     Node<T> root;
     int size;
 

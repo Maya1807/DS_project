@@ -1,12 +1,19 @@
 public class Race {
-    Tree23ByAvg<RunnerID> runners;
-    NodeMin<RunnerID> minByAvg;
-    NodeMin<RunnerID> minByMin;
-    public void init()
+    private Tree23<RunnerID> runnersByID;
+    //NodeMin<RunnerID> minByAvg;
+    //NodeMin<RunnerID> minByMin;
+    private Tree23<RunnerMinRun> runnersByMin;
+    private Tree23<RunnerAvgRun> runnersByAvg;
+    private RunnerMinRun minRunByMin;
+    private RunnerAvgRun minRunByAvg;
+
+    public Race()
     {
-        runners = new Tree23ByAvg<>();
-        minByMin = null;
-        minByAvg = null;
+        runnersByID = new Tree23<RunnerID>();
+        runnersByMin = new Tree23<RunnerMinRun>();
+        runnersByAvg = new Tree23<RunnerAvgRun>();
+        minRunByMin = new RunnerMinRun(Float.MIN_VALUE, null);
+        minRunByAvg = new RunnerAvgRun(Float.MIN_VALUE, null);
     }
     public void addRunner(RunnerID id)
     {
