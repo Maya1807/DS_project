@@ -7,52 +7,78 @@ public class Race {
     private Tree23<RunnerAvgRun> runnersByAvg;
     private RunnerMinRun minRunByMin;
     private RunnerAvgRun minRunByAvg;
+    private RunnerIDInt maxKey_RunnerIDInt = new RunnerIDInt(Integer.MAX_VALUE); ///can we use runner id int???????
+    private RunnerIDInt minKey_RunnerIDInt = new RunnerIDInt(Integer.MIN_VALUE);
+    private RunnerMinRun maxKey_RunnerMinRun = new RunnerMinRun(Float.MAX_VALUE, maxKey_RunnerIDInt);
+    private RunnerMinRun minKey_RunnerMinRun = new RunnerMinRun(Float.MIN_VALUE, minKey_RunnerIDInt);
+    private RunnerAvgRun maxKey_RunnerAvgRun = new RunnerAvgRun(Float.MAX_VALUE, maxKey_RunnerIDInt);
+    private RunnerAvgRun minKey_RunnerAvgRun = new RunnerAvgRun(Float.MIN_VALUE, minKey_RunnerIDInt);
 
 
     public Race()
     {
-        RunnerIDInt maxKey_RunnerIDInt = new RunnerIDInt(Integer.MAX_VALUE);
-        RunnerIDInt minKey_RunnerIDInt = new RunnerIDInt(Integer.MIN_VALUE);
-        RunnerMinRun maxKey_RunnerMinRun = new RunnerMinRun(Float.MAX_VALUE, null);
-        RunnerMinRun minKey_RunnerMinRun = new RunnerMinRun(Float.MIN_VALUE, null);
-        RunnerAvgRun maxKey_RunnerAvgRun = new RunnerAvgRun(Float.MAX_VALUE, null);
-        RunnerAvgRun minKey_RunnerAvgRun = new RunnerAvgRun(Float.MIN_VALUE, null);
-
         runnersByID = new Tree23<RunnerID>(maxKey_RunnerIDInt, minKey_RunnerIDInt);
         runnersByMin = new Tree23<RunnerMinRun>(maxKey_RunnerMinRun, minKey_RunnerMinRun);
         runnersByAvg = new Tree23<RunnerAvgRun>(maxKey_RunnerAvgRun, minKey_RunnerAvgRun);
         minRunByMin = new RunnerMinRun(Float.MIN_VALUE, null);
         minRunByAvg = new RunnerAvgRun(Float.MIN_VALUE, null);
     }
-    public void addRunner(RunnerID id)
+    public void addRunner(RunnerID id) // h done?
     {
-        Runner newRunner = new Runner(id);
-        runnersByID.insert(new Node<RunnerID>(id, newRunner));
-        runnersByAvg.insert(new Node<RunnerAvgRun>(newRunner.getAvgRun(), newRunner));
-        runnersByMin.insert(new Node<RunnerMinRun>(newRunner.getMinRun(), newRunner));
+        if (runnersByID.search(runnersByID.getRoot(), id) == null){
+            Runner newRunner = new Runner(id);
+            runnersByID.insert(new Node<RunnerID>(id, newRunner));
+            runnersByAvg.insert(new Node<RunnerAvgRun>(newRunner.getAvgRun(), newRunner));
+            runnersByMin.insert(new Node<RunnerMinRun>(newRunner.getMinRun(), newRunner));
+        }
+        else{
+            throw new IllegalArgumentException("Runner already exists, can't add!");
+        }
 
     }
 
-    public void removeRunner(RunnerID id)
-    {
+    public void removeRunner(RunnerID id) { //h done?
+        Node runnerID = runnersByID.search(runnersByID.getRoot(), id);
+        if (runnerID == null){
+            throw new IllegalArgumentException("Runner doesn't exist, can't remove!");
+        }
+        else {
+            Runner runner = runnerID.getData();
+            RunnerAvgRun runnerAvgRun = runner.getAvgRun();
+            RunnerMinRun runnerMinRun = runner.getMinRun();
 
+            runnersByID.delete(runnerID);
+            runnersByAvg.delete(runnersByAvg.search(runnersByAvg.getRoot(), runnerAvgRun));
+            runnersByMin.delete(runnersByMin.search(runnersByMin.getRoot(), runnerMinRun));
+
+            if (this.minRunByAvg == runnerAvgRun){
+                this.minRunByAvg = runnersByAvg.minimum(maxKey_RunnerAvgRun).getKey();
+            }
+            if (this.minRunByMin == runnerMinRun){
+                this.minRunByMin = runnersByMin.minimum(maxKey_RunnerMinRun).getKey();
+            }
+        }
     }
 
 
-    public void addRunToRunner(RunnerID id, float time)
-    {
-//        NodeMin<RunnerID> node = runners.search(runners.root, id);
-//        ((RunnerIDInt) node.key).addRun(time);
-        addRunToRunnerTreeSpecific(runnersByID, id, time);
-        addRunToRunnerTreeSpecific(runnersByAvg, id, time);
-        addRunToRunnerTreeSpecific(runnersByMin, id, time);
+    public void addRunToRunner(RunnerID id, float time) { //doesnt hurt? doesnt really delete right? node object still exists?
+        Runner runner = runnersByID.search(runnersByID.getRoot(), id).getData();
+        runner.addRun(time);
 
+        if (runner.getMinRun().getMinRun() == time){ //if min run updated
+            //handle run sorting by avg and by min in 2 trees
+            Node<RunnerMinRun> runnerMinNode = runnersByMin.search(runnersByMin.getRoot(), runner.getMinRun());
+            runnersByMin.delete(runnerMinNode); //doesnt hurt? doesnt really delete right? node object still exists?
+            runnersByMin.insert(runnerMinNode);
+            this.minRunByMin = runnersByMin.minimum(maxKey_RunnerMinRun).getKey(); //update min runner by min run
+        }
+        //handle new sorting of average tree in any case because average was updated anyway
+        Node<RunnerAvgRun> runnerAvgNode = runnersByAvg.search(runnersByAvg.getRoot(), runner.getAvgRun());
+        runnersByAvg.delete(runnerAvgNode); //doesnt hurt? doesnt really delete right? node object still exists?
+        runnersByAvg.insert(runnerAvgNode);
+        this.minRunByAvg = runnersByAvg.minimum(maxKey_RunnerAvgRun).getKey(); // update min runner by avg run
     }
-    private void addRunToRunnerTreeSpecific(Tree23 tree, RunnerID id, float time){
-        Node runnerNode = tree.search(tree.root, id);
-        Node newRun = new Node(runnerNode.getKey() ,runnerNode.getData(), null);
-        runnerNode.getData().getRuns().insert(newRun);
-    }
+
 
     public void removeRunFromRunner(RunnerID id, float time)
     {
@@ -60,32 +86,36 @@ public class Race {
         ((RunnerIDInt) node.key).removeRun(time);
     }
 
-    public RunnerID getFastestRunnerAvg()
+    public RunnerID getFastestRunnerAvg() //done
     {
-        return runners.minimumAvg().key;
+        return this.minRunByAvg.getId();
     }
 
-    public RunnerID getFastestRunnerMin()
+    public RunnerID getFastestRunnerMin() //done
     {
-        return runners.minimumMinRun().key;
+        return this.minRunByMin.getId();
     }
 
-    public float getMinRun(RunnerID id)
+    public float getMinRun(RunnerID id) //h done
     {
-        return ((RunnerIDInt)id).getMinRun();
+        return runnersByID.search(runnersByID.getRoot(), id).getData().getMinRun().getMinRun();
     }
-    public float getAvgRun(RunnerID id){
-
-        return ((RunnerIDInt)id).getAvg();
-    }
-
-    public int getRankAvg(RunnerID id)
+    public float getAvgRun(RunnerID id) //h done
     {
-        throw new java.lang.UnsupportedOperationException("not implemented");
+        return runnersByID.search(runnersByID.getRoot(), id).getData().getAvgRun().getAvgRun();
     }
 
-    public int getRankMin(RunnerID id)
+    public int getRankAvg(RunnerID id) //h done? something more to update in here?
     {
-        throw new java.lang.UnsupportedOperationException("not implemented");
+        RunnerAvgRun avgRun = runnersByID.search(runnersByID.getRoot(), id).getData().getAvgRun();
+        Node avgRunNode = runnersByAvg.search(runnersByAvg.getRoot(), avgRun);
+        return runnersByAvg.rank(avgRunNode);
+    }
+
+    public int getRankMin(RunnerID id) //h done? something more to update in here?
+    {
+        RunnerMinRun minRun = runnersByID.search(runnersByID.getRoot(), id).getData().getMinRun();
+        Node minRunNode = runnersByMin.search(runnersByMin.getRoot(), minRun);
+        return runnersByMin.rank(minRunNode);
     }
 }

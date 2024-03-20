@@ -1,6 +1,6 @@
 public class Tree23<T extends RunnerID> {
-    Node<T> root;
-    int treeSize;
+    private Node<T> root;
+    private int treeSize;
 
     public Tree23(T maxKey, T minKey){//m done
         this.init(maxKey, minKey);
@@ -35,9 +35,9 @@ public class Tree23<T extends RunnerID> {
                 return null;
             }
         }
-            if (key.isSmaller(x.getLeft().getKey())){
+        if (!x.getLeft().getKey().isSmaller(key)){
             return search(x.getLeft(), key);
-        } else if (key.isSmaller(x.getMiddle().getKey())) {
+        } else if (!x.getMiddle().getKey().isSmaller(key)) {
             return search(x.getMiddle(), key);
         }
         else{
@@ -45,7 +45,9 @@ public class Tree23<T extends RunnerID> {
         }
     }
 
-    public Node<T> minimum(T maxKey) throws IllegalArgumentException {//m done
+
+
+    public Node<T> minimum(T maxKey) {//m done
         Node<T> x = this.root;
         while (!x.isLeaf()){
             x = x.getLeft();
@@ -258,6 +260,11 @@ public class Tree23<T extends RunnerID> {
         }
     }
 
+    public Node<T> getRoot() {
+        return root;
+    }
 
-
+    public int getTreeSize() {
+        return treeSize;
+    }
 }
