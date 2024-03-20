@@ -27,7 +27,7 @@ public class Tree23<T extends RunnerID> {
 
 
     public Node<T> search(Node<T> x, T key){//m done
-        if (x.getLeft() == null && x.getMiddle() == null){
+        if (x.isLeaf()){
             if(x.getKey() == key){
                 return x;
             }
@@ -46,8 +46,8 @@ public class Tree23<T extends RunnerID> {
     }
 
     public Node<T> minimum(T maxKey) throws IllegalArgumentException {//m done
-        Node x = this.root;
-        while (!(x.getLeft() == null && x.getMiddle() == null)){
+        Node<T> x = this.root;
+        while (!x.isLeaf()){
             x = x.getLeft();
         }
         x = x.getParent().getMiddle();
@@ -83,7 +83,7 @@ public class Tree23<T extends RunnerID> {
         updateKey(x);
     }
     public Node<T> insertAndSplit(Node<T> x, Node<T> z){//h done
-        Node<T> l = x.getLeft(), m = x.getMiddle(), r = x.getRight(), y = new Node<T>();
+        Node<T> l = x.getLeft(), m = x.getMiddle(), r = x.getRight(), y = new Node<>();
         if (r == null){
             if (z.isSmaller(l)) { setChildren(x,z,l,m); }
             else if (z.isSmaller(m)) { setChildren(x,l,z,m); }
@@ -115,7 +115,7 @@ public class Tree23<T extends RunnerID> {
     public void insert(Node<T> z){//h done
         z.setSize(1);
         Node<T> y = this.root, l = y.getLeft(), m = y.getMiddle(), r = y.getRight(), x;
-        while (!(l == null && m == null && r == null)){
+        while (!(l == null && m == null && r == null)){ //can change to !y.isLeaf()
             if (z.isSmaller(l)) { y = l; }
             else if (z.isSmaller(m)) { y = m; }
             else { y = r; }
@@ -202,7 +202,7 @@ public class Tree23<T extends RunnerID> {
         else {
             setChildren(y, y.getLeft(), y.getMiddle(), null);
         }
-        delete(x);
+        //delete(x); // infinite recursion - change to y.getPLACE = null in the conditions above
         y.setSize(y.getSize() - 1);
         while (y != null){
             if (y.getMiddle() == null){
@@ -228,7 +228,7 @@ public class Tree23<T extends RunnerID> {
 
     public int rank(Node<T> x){//m done
         int rank = 1;
-        Node y = x.getParent();
+        Node<T> y = x.getParent();
         while(y != null){
             if(x == y.getMiddle()){
                 rank = rank + y.getLeft().getSize();

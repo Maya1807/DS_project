@@ -71,6 +71,7 @@ public class Node<T extends RunnerID> {
     public Runner getData(){
         return data;
     }
+    public boolean isLeaf() { return left == null; }
 
     public boolean isSmaller(Node<T> other){
         return this.key.isSmaller(other.getKey());
