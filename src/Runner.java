@@ -1,6 +1,6 @@
 public class Runner {
     private RunnerID id;
-    Tree23<RunNode> runs;
+    Tree23<Run> runs;
     RunnerMinRun minRun;
     RunnerAvgRun avgRun;
     float avg;
@@ -8,17 +8,23 @@ public class Runner {
     public Runner(RunnerID id){
         super();
         this.id = id;
-        RunNode maxKey = new RunNode(Float.MAX_VALUE, null, null);
-        RunNode minKey = new RunNode(Float.MIN_VALUE, null, null);
-        runs = new Tree23<RunNode>(maxKey, minKey);
-        minRun = null;
-        avg = 0;
+        Run maxKey = new Run(Float.MAX_VALUE, null);
+        Run minKey = new Run(Float.MIN_VALUE, null);
+        runs = new Tree23<Run>(maxKey, minKey);
+        minRun = new RunnerMinRun(Float.MAX_VALUE, id);
+        avgRun = new RunnerAvgRun(Float.MAX_VALUE, id);
+        //avg = 0;
     }
 
-    public float getAvg() {
-        return avg;
+    //public float getAvg() {
+      //  return avg;
+    //}
+
+    public RunnerAvgRun getAvgRun() {
+        return avgRun;
     }
-    public Tree23<RunNode> getRuns(){
+
+    public Tree23<Run> getRuns(){
         return runs;
     }
 
@@ -33,9 +39,7 @@ public class Runner {
 //        }
     }
 
-    public float getMinRun(){
-        return minRun.getMinRun();
+    public RunnerMinRun getMinRun() {
+        return minRun;
     }
-
-
 }

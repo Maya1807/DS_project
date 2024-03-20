@@ -5,12 +5,16 @@ public class Node<T extends RunnerID> {
     private Node<T> left = null;
     private Node<T> middle = null;
     private Node<T> right = null;
-    private int size = 0; //check if needs to be 0 or 1
+    private int size;
 
     public Node(){
         this.key = null;
         this.data = null;
         this.parent = null;
+    }
+    public Node(T key, Runner data){
+        this.key = key;
+        this.data = data;
     }
 
     public Node(T key, Runner data, Node<T> parent){
