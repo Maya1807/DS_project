@@ -27,9 +27,25 @@ public class Main {
         Race race = new Race();
         race.addRunner(id1);
         race.addRunner(id2);
-        race.addRunToRunner(id1, (float)118.0);
+        race.addRunToRunner(id1, (float)20);
+        System.out.println("The runner with the smallest minimum time is "+ race.getFastestRunnerMin());
+        race.addRunToRunner(id2, (float)10);
+        System.out.println("The runner with the smallest minimum time is "+ race.getFastestRunnerMin());
+        race.addRunToRunner(id1, (float)5);
+        System.out.println("The runner with the smallest minimum time is "+ race.getFastestRunnerMin());
+        race.removeRunFromRunner(id1,(float)20);
+        System.out.println("The runner with the smallest minimum time is "+ race.getFastestRunnerMin());
+        race.removeRunFromRunner(id1,(float)5);
+        System.out.println("The runner with the smallest minimum time is "+ race.getFastestRunnerMin());
+        race.addRunToRunner(id1, (float)50);
+        race.addRunToRunner(id1, (float)40);
+        race.addRunToRunner(id1, (float)30);
+        race.addRunToRunner(id1, (float)5);
+        System.out.println();
         System.out.println("The min running time of" + id2.toString() + "is " + race.getMinRun(id2));
         System.out.println("The avg running time of" + id1.toString() + "is " + race.getAvgRun(id1));
+        System.out.println("The avg running time of" + id2.toString() + "is " + race.getAvgRun(id2));
         System.out.println("The runner with the smallest minimum time is "+ race.getFastestRunnerMin());
+        System.out.println("The runner with the smallest average time is "+ race.getFastestRunnerAvg());
     }
 }

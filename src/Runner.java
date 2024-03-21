@@ -4,12 +4,12 @@ public class Runner {
     private RunnerMinRun minRun;
     private RunnerAvgRun avgRun;
     private float avg;
+    private Run maxKey = new Run(Float.MAX_VALUE, null);
+    private Run minKey = new Run(Float.MIN_VALUE, null);
 
     public Runner(RunnerID id){
         super();
         this.id = id;
-        Run maxKey = new Run(Float.MAX_VALUE, null);
-        Run minKey = new Run(Float.MIN_VALUE, null);
         runs = new Tree23<Run>(maxKey, minKey);
         minRun = new RunnerMinRun(Float.MAX_VALUE, id);
         avgRun = new RunnerAvgRun(Float.MAX_VALUE, id);
@@ -34,25 +34,43 @@ public class Runner {
     }
 
     public void addRun(float time){ // h done?
-        Run newRun = new Run(time, id);
-        Node<Run> newRunNode = new Node<Run>(newRun ,this, null);
-        float oldSum = avgRun.getAvgRun() * runs.getTreeSize();
-        this.runs.insert(newRunNode);
-        if (time < this.minRun.getMinRun()){
-            this.minRun.setMinRun(time);
+        if (runs.searchByTime(runs.getRoot(), time) != null){
+            throw new IllegalArgumentException("run already exists, cant add run!");
         }
-        float newAvg = (oldSum + time) / runs.getTreeSize();
-        this.avgRun.setAvgRun(newAvg);
+        else {
+            Run newRun = new Run(time, id);
+            Node<Run> newRunNode = new Node<Run>(newRun, this, null);
+            float oldSum = avgRun.getAvgRun() * runs.getTreeSize();
+            runs.insert(newRunNode);
+            if (time < this.minRun.getMinRun()) {
+                this.minRun.setMinRun(time);
+            }
+            float newAvg = (oldSum + time) / runs.getTreeSize();
+            this.avgRun.setAvgRun(newAvg);
+        }
     }
 
     public void removeRun(float time){
-//        avg = (1 / (runs.size - 1)) * (avg * runs.size - time);
-//        Node<Float> node = runs.search(runs.root, time);
-//        runs.delete(node);
-//        //finding the new min if current min deleted
-//        if(minRun.key == time){
-//            minRun = runs.minimum();
-//        }
+        Node<Run> runNode = runs.searchByTime(runs.getRoot(), time);
+        if (runNode == null){
+            throw new IllegalArgumentException("run doesnt exist, cant remove run!");
+        }
+        else {
+            Run run = runNode.getKey();
+            float oldSum = avgRun.getAvgRun() * runs.getTreeSize();
+            this.runs.delete(runNode);
+            if (runs.getTreeSize() == 0){
+                this.avgRun.setAvgRun(Float.MAX_VALUE);
+                this.minRun.setMinRun(Float.MAX_VALUE);
+                return;
+            }
+            if (this.minRun.getMinRun() == time) {
+                //finding the new min if current min deleted
+                this.minRun.setMinRun(runs.minimum(maxKey).getKey().getRunTime());
+            }
+            float newAvg = (oldSum - time) / runs.getTreeSize();
+            this.avgRun.setAvgRun(newAvg);
+        }
     }
 
     public RunnerMinRun getMinRun() {

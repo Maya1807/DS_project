@@ -25,7 +25,6 @@ public class Tree23<T extends RunnerID> {
     }
 
 
-
     public Node<T> search(Node<T> x, T key){//m done
         if (x.isLeaf()){
             if(x.getKey() == key){
@@ -46,14 +45,36 @@ public class Tree23<T extends RunnerID> {
     }
 
 
+    public Node<T> searchByTime(Node<T> x, float time){ //check first 'if' works
+        if (x.getKey().getClass() != Run.class){
+            return null; //check that works
+        }
+        if (x.isLeaf()){
+            if(((Run)x.getKey()).getRunTime() == time){
+                return x;
+            }
+            else{
+                return null;
+            }
+        }
+        if (time <= ((Run)x.getLeft().getKey()).getRunTime()){
+            return searchByTime(x.getLeft(), time);
+        } else if (time <= ((Run)x.getMiddle().getKey()).getRunTime()) {
+            return searchByTime(x.getMiddle(), time);
+        }
+        else{
+            return searchByTime(x.getRight(), time);
+        }
+    }
 
-    public Node<T> minimum(T maxKey) {//m done
+
+    public Node<T> minimum(T maxKey) { //works? minimum in add run not max
         Node<T> x = this.root;
         while (!x.isLeaf()){
             x = x.getLeft();
         }
         x = x.getParent().getMiddle();
-        if(x.getKey() != maxKey || x.getKey().getClass() == Run.class){
+        if(x.getKey() != maxKey || x.getKey().getClass() == Run.class){ //works? minimum in add run not max
             return x;
         } else{
             throw new IllegalArgumentException("Empty Tree");
@@ -115,6 +136,7 @@ public class Tree23<T extends RunnerID> {
     }
 
     public void insert(Node<T> z){//h done
+        this.treeSize++;
         z.setSize(1);
         Node<T> y = this.root, l = y.getLeft(), m = y.getMiddle(), r = y.getRight(), x;
         while (!(l == null && m == null && r == null)){ //can change to !y.isLeaf()
@@ -137,7 +159,6 @@ public class Tree23<T extends RunnerID> {
             this.root = w;
         }
 
-        this.treeSize++;
     }
 
     public Node<T> borrowOrMerge(Node<T> y){//h done
@@ -152,7 +173,7 @@ public class Tree23<T extends RunnerID> {
             }
             else {
                 setChildren(x, y.getLeft(), x.getLeft(), x.getMiddle());
-                delete(y);
+                disconnect(y);
                 setChildren(z, x, z.getRight(), null);
                 mergedOrBorrowed = true;
             }
@@ -166,7 +187,7 @@ public class Tree23<T extends RunnerID> {
             }
             else {
                 setChildren(x, x.getLeft(), x.getMiddle(), y.getLeft());
-                delete(y);
+                disconnect(y);
                 setChildren(z, x, z.getRight(), null);
                 mergedOrBorrowed = true;
             }
@@ -179,7 +200,7 @@ public class Tree23<T extends RunnerID> {
                 mergedOrBorrowed = true;
             } else {
                 setChildren(x, x.getLeft(), x.getMiddle(), y.getLeft());
-                delete(y);
+                disconnect(y);
                 setChildren(z, z.getLeft(), x, null);
                 mergedOrBorrowed = true;
             }
@@ -194,6 +215,7 @@ public class Tree23<T extends RunnerID> {
     }
 
     public void delete(Node<T> x){//h done
+        this.treeSize--;
         Node<T> y = x.getParent();
         if (x == y.getLeft()){
             setChildren(y, y.getMiddle(), y.getRight(), null);
@@ -204,28 +226,32 @@ public class Tree23<T extends RunnerID> {
         else {
             setChildren(y, y.getLeft(), y.getMiddle(), null);
         }
-        //delete(x); // infinite recursion - change to y.getPLACE = null in the conditions above
+        disconnect(x);
         y.setSize(y.getSize() - 1);
-        while (y != null){
-            if (y.getMiddle() == null){
-                if (y != this.root){
+        while (y != null) {
+            if (y.getMiddle() == null) {
+                if (y != this.root) {
                     y = borrowOrMerge(y);
-                }
-                else {
+                } else {
                     this.root = y.getLeft();
                     y.getLeft().setParent(null);
-                    delete(y);
+                    disconnect(y);
                     return;
                 }
-            }
-            else {
+            } else {
                 decreaseSize(y);
                 updateKey(y);
                 y = y.getParent();
             }
         }
+    }
 
-        treeSize--;
+    public void disconnect(Node<T> x) {
+        x.setParent(null);
+        x.setRight(null);
+        x.setMiddle(null);
+        x.setLeft(null);
+        x.setSize(0);
     }
 
     public int rank(Node<T> x){//m done

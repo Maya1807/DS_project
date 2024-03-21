@@ -61,29 +61,56 @@ public class Race {
     }
 
 
-    public void addRunToRunner(RunnerID id, float time) { //doesnt hurt? doesnt really delete right? node object still exists?
+    public void addRunToRunner(RunnerID id, float time) { //h done?
         Runner runner = runnersByID.search(runnersByID.getRoot(), id).getData();
-        runner.addRun(time);
-
-        if (runner.getMinRun().getMinRun() == time){ //if min run updated
-            //handle run sorting by avg and by min in 2 trees
+        if (runner == null) {
+            throw new IllegalArgumentException("runner doesnt exist, cant add run!");
+        }
+        else {
             Node<RunnerMinRun> runnerMinNode = runnersByMin.search(runnersByMin.getRoot(), runner.getMinRun());
-            runnersByMin.delete(runnerMinNode); //doesnt hurt? doesnt really delete right? node object still exists?
+            runnersByMin.delete(runnerMinNode);
+
+            Node<RunnerAvgRun> runnerAvgNode = runnersByAvg.search(runnersByAvg.getRoot(), runner.getAvgRun());
+            runnersByAvg.delete(runnerAvgNode);
+
+            runner.addRun(time);
+
+            //handle run sorting by avg and by min in 2 trees
             runnersByMin.insert(runnerMinNode);
             this.minRunByMin = runnersByMin.minimum(maxKey_RunnerMinRun).getKey(); //update min runner by min run
+
+            //handle new sorting of average tree in any case because average was updated anyway
+            runnersByAvg.insert(runnerAvgNode);
+            this.minRunByAvg = runnersByAvg.minimum(maxKey_RunnerAvgRun).getKey(); // update min runner by avg run
         }
-        //handle new sorting of average tree in any case because average was updated anyway
-        Node<RunnerAvgRun> runnerAvgNode = runnersByAvg.search(runnersByAvg.getRoot(), runner.getAvgRun());
-        runnersByAvg.delete(runnerAvgNode); //doesnt hurt? doesnt really delete right? node object still exists?
-        runnersByAvg.insert(runnerAvgNode);
-        this.minRunByAvg = runnersByAvg.minimum(maxKey_RunnerAvgRun).getKey(); // update min runner by avg run
     }
 
 
-    public void removeRunFromRunner(RunnerID id, float time)
+    public void removeRunFromRunner(RunnerID id, float time) //check
     {
-        NodeMin<RunnerID> node = runners.search(runners.root, id);
-        ((RunnerIDInt) node.key).removeRun(time);
+        Runner runner = runnersByID.search(runnersByID.getRoot(), id).getData();
+        if (runner == null){
+            throw new IllegalArgumentException("runner doesnt exist, cant remove run!");
+        }
+        else {
+            float oldMinRunTime = runner.getMinRun().getMinRun();
+
+            Node<RunnerMinRun> runnerMinNode = runnersByMin.search(runnersByMin.getRoot(), runner.getMinRun());
+            runnersByMin.delete(runnerMinNode);
+
+            Node<RunnerAvgRun> runnerAvgNode = runnersByAvg.search(runnersByAvg.getRoot(), runner.getAvgRun());
+            runnersByAvg.delete(runnerAvgNode);
+
+            runner.removeRun(time);
+
+            //handle run sorting by avg and by min in 2 trees
+            runnersByMin.insert(runnerMinNode);
+            this.minRunByMin = runnersByMin.minimum(maxKey_RunnerMinRun).getKey(); //update min runner by min run
+
+            //handle new sorting of average tree in any case because average was updated anyway
+            runnersByAvg.insert(runnerAvgNode);
+            this.minRunByAvg = runnersByAvg.minimum(maxKey_RunnerAvgRun).getKey(); // update min runner by avg run
+        }
     }
 
     public RunnerID getFastestRunnerAvg() //done
