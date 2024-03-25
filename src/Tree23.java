@@ -7,6 +7,15 @@ public class Tree23<T extends RunnerID> {
         this.treeSize = 0;
     }
 
+    //constructor for id Trees
+    public Tree23(boolean idTree){
+        if(idTree) {
+            this.initIDTree();
+        }
+        this.treeSize = 0;
+
+    }
+
     private void init(T maxKey, T minKey){
         Node<T> x = new Node<>();
         Node<T> left = new Node<>();
@@ -24,19 +33,56 @@ public class Tree23<T extends RunnerID> {
         this.root = x;
     }
 
+    private void initIDTree(){
+        Node<T> x = new Node<>();
+        Node<T> left = new Node<>();
+        left = left.getMinSentinel();
+        Node<T> middle = new Node<>();
+        middle = middle.getMaxSentinel();
+        //keys are already set
+        left.setParent(x);
+        middle.setParent(x);
+        left.setSize(0);
+        middle.setSize(0);
+        x.setKey(middle.getKey());
+        x.setLeft(left);
+        x.setMiddle(middle);
+        x.setSize(0);
+        this.root = x;
+    }
+
+
+//    public Node<T> search(Node<T> x, T key){//m done
+//        if (x.isLeaf()){
+//            if(x.getKey() == key){
+//                return x;
+//            }
+//            else{
+//                return null;
+//            }
+//        }
+//        if (!x.getLeft().getKey().isSmaller(key)){
+//            return search(x.getLeft(), key);
+//        } else if (!x.getMiddle().getKey().isSmaller(key)) {
+//            return search(x.getMiddle(), key);
+//        }
+//        else{
+//            return search(x.getRight(), key);
+//        }
+//    }
 
     public Node<T> search(Node<T> x, T key){//m done
         if (x.isLeaf()){
-            if(x.getKey() == key){
+            if(isEqual(x.getKey(), key)){
                 return x;
             }
             else{
                 return null;
             }
         }
-        if (!x.getLeft().getKey().isSmaller(key)){
+        if(sensitiveIsSmaller(key, x.getLeft().getKey()) || isEqual(key, x.getLeft().getKey())) {
             return search(x.getLeft(), key);
-        } else if (!x.getMiddle().getKey().isSmaller(key)) {
+        } else if (sensitiveIsSmaller(key, x.getMiddle().getKey()) || isEqual(key, x.getMiddle().getKey())) {
             return search(x.getMiddle(), key);
         }
         else{
@@ -177,7 +223,7 @@ public class Tree23<T extends RunnerID> {
                 setChildren(z, x, z.getRight(), null);
                 mergedOrBorrowed = true;
             }
-           // return z;
+            // return z;
         } else if (y == z.getMiddle()){
             x = z.getLeft();
             if (x.getRight() != null){
@@ -293,4 +339,23 @@ public class Tree23<T extends RunnerID> {
     public int getTreeSize() {
         return treeSize;
     }
+
+    private boolean isEqual(T key1, T key2){
+        return !sensitiveIsSmaller(key1, key2) && !sensitiveIsSmaller(key2, key1);
+
+    }
+
+    private boolean sensitiveIsSmaller(T key1, T key2){
+        if(key2 instanceof Sentinel){
+            if(key2 == Sentinel.getInstance1()){
+                return false;
+            }
+            else if (key2 == Sentinel.getInstance2()){
+                return true;
+            }
+        }
+        return key1.isSmaller(key2);
+    }
+
+
 }

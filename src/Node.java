@@ -6,6 +6,9 @@ public class Node<T extends RunnerID> {
     private Node<T> middle = null;
     private Node<T> right = null;
     private int size;
+    private boolean isMinSentinel;
+    private boolean isMaxSentinel;
+
 
     public Node(){
         this.key = null;
@@ -22,6 +25,7 @@ public class Node<T extends RunnerID> {
         this.data = data;
         this.parent = parent;
     }
+
 
     public Node<T> getParent() {
         return parent;
@@ -60,7 +64,6 @@ public class Node<T extends RunnerID> {
     public void setKey(T key) {
         this.key = key;
     }
-
     public int getSize() {
         return size;
     }
@@ -73,8 +76,39 @@ public class Node<T extends RunnerID> {
     }
     public boolean isLeaf() { return left == null; }
 
+
     public boolean isSmaller(Node<T> other){
+        if(other.getKey() instanceof Sentinel){
+            if(other.getKey() == Sentinel.getInstance1()){
+                return false;
+            } else if (other.getKey() == Sentinel.getInstance2()) {
+                return true;
+            }
+        }
+        if(this.getKey() instanceof Sentinel){
+            if(this.key == Sentinel.getInstance1()){
+                return true;
+            }
+            if (this.key == Sentinel.getInstance2()){
+                return false;
+            }
+        }
         return this.key.isSmaller(other.getKey());
+
     }
+
+    public Node<T> getMinSentinel(){
+        Node<T> minSentinel = new Node<>((T) Sentinel.getInstance1(), new Runner(Sentinel.getInstance1()));
+        minSentinel.isMinSentinel = true;
+        return minSentinel;
+    }
+
+    public Node<T> getMaxSentinel(){
+        Node<T> maxSentinel =  new Node<>((T) Sentinel.getInstance2(), new Runner(Sentinel.getInstance2()));
+        maxSentinel.isMaxSentinel = true;
+        return maxSentinel;
+    }
+
+
 
 }

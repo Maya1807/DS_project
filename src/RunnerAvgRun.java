@@ -21,9 +21,13 @@ public class RunnerAvgRun extends RunnerID{
 
     @Override
     public boolean isSmaller(RunnerID other) {
-        //if (other.getClass() != this.getClass()){
-        //throw new IllegalArgumentException("illegal compare isSmaller");
-        //}
+        if(other instanceof RunnerAvgRun){
+            if(((RunnerAvgRun) other).isMinSentinel()) { return false;}
+            if(((RunnerAvgRun) other).isMaxSentinel()) { return true;}
+        }
+        if(this.isMinSentinel()) { return true;}
+        if(this.isMaxSentinel()) { return false;}
+
         if (this.avgRun == ((RunnerAvgRun)other).getAvgRun()){
             return this.id.isSmaller(((RunnerAvgRun)other).getId());
         }
@@ -33,5 +37,15 @@ public class RunnerAvgRun extends RunnerID{
     @Override
     public String toString(){
         return null;
+    }
+    private boolean isMinSentinel(){
+        if(avgRun == Float.MIN_VALUE && id == Sentinel.getInstance1())
+            return true;
+        return false;
+    }
+    private boolean isMaxSentinel(){
+        if(avgRun == Float.MAX_VALUE && id == Sentinel.getInstance2())
+            return true;
+        return false;
     }
 }

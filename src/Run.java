@@ -1,5 +1,5 @@
 public class Run extends RunnerID{
-    private float runTime; 
+    private float runTime;
     private RunnerID id;
 
 

@@ -7,19 +7,20 @@ public class Race {
     private Tree23<RunnerAvgRun> runnersByAvg;
     private RunnerMinRun minRunByMin;
     private RunnerAvgRun minRunByAvg;
-    private RunnerIDInt maxKey_RunnerIDInt = new RunnerIDInt(Integer.MAX_VALUE); ///can we use runner id int???????
-    private RunnerIDInt minKey_RunnerIDInt = new RunnerIDInt(Integer.MIN_VALUE);
-    private RunnerMinRun maxKey_RunnerMinRun = new RunnerMinRun(Float.MAX_VALUE, maxKey_RunnerIDInt);
-    private RunnerMinRun minKey_RunnerMinRun = new RunnerMinRun(Float.MIN_VALUE, minKey_RunnerIDInt);
-    private RunnerAvgRun maxKey_RunnerAvgRun = new RunnerAvgRun(Float.MAX_VALUE, maxKey_RunnerIDInt);
-    private RunnerAvgRun minKey_RunnerAvgRun = new RunnerAvgRun(Float.MIN_VALUE, minKey_RunnerIDInt);
+    //private RunnerIDInt maxKey_RunnerIDInt = new RunnerIDInt(Integer.MAX_VALUE); ///can we use runner id int???????
+    //private RunnerIDInt minKey_RunnerIDInt = new RunnerIDInt(Integer.MIN_VALUE);
+    private final RunnerMinRun maxKey_RunnerMinRun = new RunnerMinRun(Float.MAX_VALUE, Sentinel.getInstance2());
+    private final RunnerMinRun minKey_RunnerMinRun = new RunnerMinRun(Float.MIN_VALUE, Sentinel.getInstance1());
+    private RunnerAvgRun maxKey_RunnerAvgRun = new RunnerAvgRun(Float.MAX_VALUE, Sentinel.getInstance2());
+    private RunnerAvgRun minKey_RunnerAvgRun = new RunnerAvgRun(Float.MIN_VALUE, Sentinel.getInstance1());
 
 
     public Race()
     {
-        runnersByID = new Tree23<RunnerID>(maxKey_RunnerIDInt, minKey_RunnerIDInt);
-        runnersByMin = new Tree23<RunnerMinRun>(maxKey_RunnerMinRun, minKey_RunnerMinRun);
-        runnersByAvg = new Tree23<RunnerAvgRun>(maxKey_RunnerAvgRun, minKey_RunnerAvgRun);
+        //runnersByID = new Tree23<RunnerID>(maxKey_RunnerIDInt, minKey_RunnerIDInt);
+        runnersByID = new Tree23<>(true);
+        runnersByMin = new Tree23<>(maxKey_RunnerMinRun, minKey_RunnerMinRun);
+        runnersByAvg = new Tree23<>(maxKey_RunnerAvgRun, minKey_RunnerAvgRun);
         minRunByMin = new RunnerMinRun(Float.MIN_VALUE, null);
         minRunByAvg = new RunnerAvgRun(Float.MIN_VALUE, null);
     }
@@ -27,9 +28,9 @@ public class Race {
     {
         if (runnersByID.search(runnersByID.getRoot(), id) == null){
             Runner newRunner = new Runner(id);
-            runnersByID.insert(new Node<RunnerID>(id, newRunner));
-            runnersByAvg.insert(new Node<RunnerAvgRun>(newRunner.getAvgRun(), newRunner));
-            runnersByMin.insert(new Node<RunnerMinRun>(newRunner.getMinRun(), newRunner));
+            runnersByID.insert(new Node<>(id, newRunner));
+            runnersByAvg.insert(new Node<>(newRunner.getAvgRun(), newRunner));
+            runnersByMin.insert(new Node<>(newRunner.getMinRun(), newRunner));
         }
         else{
             throw new IllegalArgumentException("Runner already exists, can't add!");
@@ -62,11 +63,16 @@ public class Race {
 
 
     public void addRunToRunner(RunnerID id, float time) { //h done?
-        Runner runner = runnersByID.search(runnersByID.getRoot(), id).getData();
-        if (runner == null) {
+        Node<RunnerID> runnerNode = runnersByID.search(runnersByID.getRoot(), id);
+        if(runnerNode == null) {
             throw new IllegalArgumentException("runner doesnt exist, cant add run!");
         }
         else {
+            Runner runner = runnerNode.getData();
+//        if (runner == null) {
+//            throw new IllegalArgumentException("runner doesnt exist, cant add run!");
+//        }
+//        else {
             Node<RunnerMinRun> runnerMinNode = runnersByMin.search(runnersByMin.getRoot(), runner.getMinRun());
             runnersByMin.delete(runnerMinNode);
 

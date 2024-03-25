@@ -21,9 +21,12 @@ public class RunnerMinRun extends RunnerID{
 
     @Override
     public boolean isSmaller(RunnerID other) {
-        //if (other.getClass() != this.getClass()){
-        //throw new IllegalArgumentException("illegal compare isSmaller");
-        //}
+        if(other instanceof RunnerMinRun){
+            if(((RunnerMinRun) other).isMinSentinel()) { return false;}
+            if(((RunnerMinRun) other).isMaxSentinel()) { return true;}
+        }
+        if(this.isMinSentinel()) { return true;}
+        if(this.isMaxSentinel()) { return false;}
         if (this.minRun == ((RunnerMinRun)other).getMinRun()){
             return this.id.isSmaller(((RunnerMinRun)other).getId());
         }
@@ -34,5 +37,14 @@ public class RunnerMinRun extends RunnerID{
     public String toString(){
         return null;
     }
-
+    private boolean isMinSentinel(){
+        if(minRun == Float.MIN_VALUE && id == Sentinel.getInstance1())
+            return true;
+        return false;
+    }
+    private boolean isMaxSentinel(){
+        if(minRun == Float.MAX_VALUE && id == Sentinel.getInstance2())
+            return true;
+        return false;
+    }
 }

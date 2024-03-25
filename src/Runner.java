@@ -17,7 +17,7 @@ public class Runner {
     }
 
     //public float getAvg() {
-      //  return avg;
+    //  return avg;
     //}
 
 
