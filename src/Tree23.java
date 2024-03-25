@@ -80,9 +80,9 @@ public class Tree23<T extends RunnerID> {
                 return null;
             }
         }
-        if(sensitiveIsSmaller(key, x.getLeft().getKey()) || isEqual(key, x.getLeft().getKey())) {
+        if(lessOrEqual(key, x.getLeft().getKey())){
             return search(x.getLeft(), key);
-        } else if (sensitiveIsSmaller(key, x.getMiddle().getKey()) || isEqual(key, x.getMiddle().getKey())) {
+        } else if (lessOrEqual(key, x.getMiddle().getKey())) {
             return search(x.getMiddle(), key);
         }
         else{
@@ -342,9 +342,13 @@ public class Tree23<T extends RunnerID> {
 
     private boolean isEqual(T key1, T key2){
         return !sensitiveIsSmaller(key1, key2) && !sensitiveIsSmaller(key2, key1);
-
     }
 
+    private boolean lessOrEqual(T key1, T key2){
+        return sensitiveIsSmaller(key1, key2) || isEqual(key1, key2);
+    }
+
+    //this is Smaller method is sensitive to Sentinels (comparing keys)
     private boolean sensitiveIsSmaller(T key1, T key2){
         if(key2 instanceof Sentinel){
             if(key2 == Sentinel.getInstance1()){
