@@ -25,6 +25,9 @@ public class Sentinel extends RunnerID{
 
     @Override
     public String toString() {
-        return null;
+        if(this == instance1){
+            return "minSentinel";
+        }
+        return "maxSentinel";
     }
 }

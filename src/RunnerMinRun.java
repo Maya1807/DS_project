@@ -27,6 +27,7 @@ public class RunnerMinRun extends RunnerID{
         }
         if(this.isMinSentinel()) { return true;}
         if(this.isMaxSentinel()) { return false;}
+
         if (this.minRun == ((RunnerMinRun)other).getMinRun()){
             return this.id.isSmaller(((RunnerMinRun)other).getId());
         }

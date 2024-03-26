@@ -13,14 +13,7 @@ public class Runner {
         runs = new Tree23<Run>(maxKey, minKey);
         minRun = new RunnerMinRun(Float.MAX_VALUE, id);
         avgRun = new RunnerAvgRun(Float.MAX_VALUE, id);
-        //avg = 0;
     }
-
-    //public float getAvg() {
-    //  return avg;
-    //}
-
-
     public RunnerID getId() {
         return id;
     }
@@ -33,7 +26,7 @@ public class Runner {
         return runs;
     }
 
-    public void addRun(float time){ // h done?
+    public void addRun(float time){
         if (runs.searchByTime(runs.getRoot(), time) != null){
             throw new IllegalArgumentException("run already exists, cant add run!");
         }
@@ -52,10 +45,6 @@ public class Runner {
 
     public void removeRun(float time){
         Node<Run> runNode = runs.searchByTime(runs.getRoot(), time);
-        if (runNode == null){
-            throw new IllegalArgumentException("run doesnt exist, cant remove run!");
-        }
-        else {
             Run run = runNode.getKey();
             float oldSum = avgRun.getAvgRun() * runs.getTreeSize();
             this.runs.delete(runNode);
@@ -70,7 +59,6 @@ public class Runner {
             }
             float newAvg = (oldSum - time) / runs.getTreeSize();
             this.avgRun.setAvgRun(newAvg);
-        }
     }
 
     public RunnerMinRun getMinRun() {

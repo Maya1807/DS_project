@@ -2,7 +2,7 @@ public class Tree23<T extends RunnerID> {
     private Node<T> root;
     private int treeSize;
 
-    public Tree23(T maxKey, T minKey){//m done
+    public Tree23(T maxKey, T minKey){
         this.init(maxKey, minKey);
         this.treeSize = 0;
     }
@@ -13,7 +13,6 @@ public class Tree23<T extends RunnerID> {
             this.initIDTree();
         }
         this.treeSize = 0;
-
     }
 
     private void init(T maxKey, T minKey){
@@ -51,27 +50,7 @@ public class Tree23<T extends RunnerID> {
         this.root = x;
     }
 
-
-//    public Node<T> search(Node<T> x, T key){//m done
-//        if (x.isLeaf()){
-//            if(x.getKey() == key){
-//                return x;
-//            }
-//            else{
-//                return null;
-//            }
-//        }
-//        if (!x.getLeft().getKey().isSmaller(key)){
-//            return search(x.getLeft(), key);
-//        } else if (!x.getMiddle().getKey().isSmaller(key)) {
-//            return search(x.getMiddle(), key);
-//        }
-//        else{
-//            return search(x.getRight(), key);
-//        }
-//    }
-
-    public Node<T> search(Node<T> x, T key){//m done
+    public Node<T> search(Node<T> x, T key){
         if (x.isLeaf()){
             if(isEqual(x.getKey(), key)){
                 return x;
@@ -80,9 +59,9 @@ public class Tree23<T extends RunnerID> {
                 return null;
             }
         }
-        if(lessOrEqual(key, x.getLeft().getKey())){
+        if(!sensitiveIsSmaller(x.getLeft().getKey(), key)) {
             return search(x.getLeft(), key);
-        } else if (lessOrEqual(key, x.getMiddle().getKey())) {
+        } else if (!sensitiveIsSmaller(x.getMiddle().getKey(), key)) {
             return search(x.getMiddle(), key);
         }
         else{
@@ -91,9 +70,9 @@ public class Tree23<T extends RunnerID> {
     }
 
 
-    public Node<T> searchByTime(Node<T> x, float time){ //check first 'if' works
+    public Node<T> searchByTime(Node<T> x, float time){
         if (x.getKey().getClass() != Run.class){
-            return null; //check that works
+            return null;
         }
         if (x.isLeaf()){
             if(((Run)x.getKey()).getRunTime() == time){
@@ -114,20 +93,20 @@ public class Tree23<T extends RunnerID> {
     }
 
 
-    public Node<T> minimum(T maxKey) { //works? minimum in add run not max
+    public Node<T> minimum(T maxKey) {
         Node<T> x = this.root;
         while (!x.isLeaf()){
             x = x.getLeft();
         }
         x = x.getParent().getMiddle();
-        if(x.getKey() != maxKey || x.getKey().getClass() == Run.class){ //works? minimum in add run not max
+        if(x.getKey() != maxKey || x.getKey().getClass() == Run.class){
             return x;
         } else{
-            throw new IllegalArgumentException("Empty Tree");
+            return null;
         }
     }
 
-    public void updateKey(Node<T> x){//h done
+    public void updateKey(Node<T> x){
         Node<T> l = x.getLeft(), m = x.getMiddle(), r = x.getRight();
         x.setKey(l.getKey());
         if (m != null){
@@ -138,7 +117,7 @@ public class Tree23<T extends RunnerID> {
         }
     }
 
-    public void setChildren(Node<T> x, Node<T> l,Node<T> m,Node<T> r){//h done
+    public void setChildren(Node<T> x, Node<T> l,Node<T> m,Node<T> r){
         x.setLeft(l);
         x.setMiddle(m);
         x.setRight(r);
@@ -151,7 +130,7 @@ public class Tree23<T extends RunnerID> {
         }
         updateKey(x);
     }
-    public Node<T> insertAndSplit(Node<T> x, Node<T> z){//h done
+    public Node<T> insertAndSplit(Node<T> x, Node<T> z){
         Node<T> l = x.getLeft(), m = x.getMiddle(), r = x.getRight(), y = new Node<>();
         if (r == null){
             if (z.isSmaller(l)) { setChildren(x,z,l,m); }
@@ -181,11 +160,11 @@ public class Tree23<T extends RunnerID> {
         return y;
     }
 
-    public void insert(Node<T> z){//h done
+    public void insert(Node<T> z){
         this.treeSize++;
         z.setSize(1);
         Node<T> y = this.root, l = y.getLeft(), m = y.getMiddle(), r = y.getRight(), x;
-        while (!(l == null && m == null && r == null)){ //can change to !y.isLeaf()
+        while (!(l == null && m == null && r == null)){
             if (z.isSmaller(l)) { y = l; }
             else if (z.isSmaller(m)) { y = m; }
             else { y = r; }
@@ -207,7 +186,7 @@ public class Tree23<T extends RunnerID> {
 
     }
 
-    public Node<T> borrowOrMerge(Node<T> y){//h done
+    public Node<T> borrowOrMerge(Node<T> y){
         Node<T> z = y.getParent(), x;
         boolean mergedOrBorrowed = false;
         if (y == z.getLeft()){
@@ -223,7 +202,6 @@ public class Tree23<T extends RunnerID> {
                 setChildren(z, x, z.getRight(), null);
                 mergedOrBorrowed = true;
             }
-            // return z;
         } else if (y == z.getMiddle()){
             x = z.getLeft();
             if (x.getRight() != null){
@@ -237,7 +215,6 @@ public class Tree23<T extends RunnerID> {
                 setChildren(z, x, z.getRight(), null);
                 mergedOrBorrowed = true;
             }
-            //return z;
         }else {
             x = z.getMiddle();
             if (x.getRight() != null) {
@@ -251,16 +228,10 @@ public class Tree23<T extends RunnerID> {
                 mergedOrBorrowed = true;
             }
         }
-
-        if(mergedOrBorrowed){
-            if (x != null) { updateSize(x); }
-            if (z != null) { updateSize(z); }
-            if (y != null && y.getParent() == null) { y.setSize(0); }
-        }
         return z;
     }
 
-    public void delete(Node<T> x){//h done
+    public void delete(Node<T> x){
         this.treeSize--;
         Node<T> y = x.getParent();
         if (x == y.getLeft()){
@@ -300,7 +271,7 @@ public class Tree23<T extends RunnerID> {
         x.setSize(0);
     }
 
-    public int rank(Node<T> x){//m done
+    public int rank(Node<T> x){
         int rank = 1;
         Node<T> y = x.getParent();
         while(y != null){
@@ -320,7 +291,7 @@ public class Tree23<T extends RunnerID> {
             int leftSize = node.getLeft() == null ? 0 : node.getLeft().getSize();
             int middleSize = node.getMiddle() == null ? 0 : node.getMiddle().getSize();
             int rightSize = node.getRight() == null ? 0 : node.getRight().getSize();
-            node.setSize(1 + leftSize + middleSize + rightSize);
+            node.setSize(leftSize + middleSize + rightSize);
             node = node.getParent();
         }
     }
@@ -342,10 +313,6 @@ public class Tree23<T extends RunnerID> {
 
     private boolean isEqual(T key1, T key2){
         return !sensitiveIsSmaller(key1, key2) && !sensitiveIsSmaller(key2, key1);
-    }
-
-    private boolean lessOrEqual(T key1, T key2){
-        return sensitiveIsSmaller(key1, key2) || isEqual(key1, key2);
     }
 
     //this is Smaller method is sensitive to Sentinels (comparing keys)

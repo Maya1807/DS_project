@@ -76,6 +76,85 @@ public class Tests {
         race.removeRunner(id1);
         race.addRunToRunner(id1, (float)1 );
     }
+    public static void test5(){
+        //passed test
+
+        RunnerIDInt id1 = new RunnerIDInt(3);
+        Race race = new Race();
+        race.removeRunner(id1);
+    }
+    public static void test6(){
+        RunnerIDInt id1 = new RunnerIDInt(1);
+        RunnerIDInt id2 = new RunnerIDInt(2);
+        RunnerIDInt id3 = new RunnerIDInt(3);
+        RunnerIDInt id4 = new RunnerIDInt(4);
+        RunnerIDInt id5 = new RunnerIDInt(5);
+        RunnerIDInt id6 = new RunnerIDInt(6);
+        RunnerIDInt id7 = new RunnerIDInt(7);
+        RunnerIDInt id8 = new RunnerIDInt(8);
+        Race race = new Race();
+        race.addRunner(id1);
+        race.addRunner(id2);
+        race.addRunner(id3);
+        race.addRunner(id4);
+        race.addRunner(id5);
+        race.addRunner(id6);
+        race.addRunner(id7);
+        race.addRunner(id8);
+
+        race.addRunToRunner(id1, (float)50);
+        race.addRunToRunner(id1, (float)40);
+        race.addRunToRunner(id1, (float)30);
+        race.addRunToRunner(id1, (float)5);
+
+        race.addRunToRunner(id2, (float)500);
+        race.addRunToRunner(id2, (float)400);
+        race.addRunToRunner(id2, (float)300);
+        race.addRunToRunner(id2, (float)50);
+        race.addRunToRunner(id2, (float)1);
+
+        race.removeRunFromRunner(id2,  (float)1);
+
+        race.removeRunFromRunner(id2, (float) 500);
+        race.removeRunFromRunner(id2, (float) 400);
+        race.removeRunFromRunner(id2, (float) 300);
+        race.removeRunFromRunner(id2, (float) 50);
+
+        System.out.println(race.getRankMin(id2));
+        System.out.println(race.getRankAvg(id2));
+
+        race.addRunToRunner(id2,(float) 1);
+
+        System.out.println(race.getRankMin(id1));
+        System.out.println(race.getRankAvg(id1));
+
+
+
+    }
+    //tests to add:
+    //1. checking rank methods
+
+    public static void test7(){
+        RunnerIDStr id1 = new RunnerIDStr("MayaHarram");
+        RunnerIDStr id2 = new RunnerIDStr("MayaM");
+        Race race = new Race();
+        race.addRunner(id1);
+        race.addRunner(id2);
+        race.addRunToRunner(id1, (float)1 );
+        race.addRunToRunner(id1, (float)10 );
+        race.addRunToRunner(id1, (float)1000 );
+
+        race.addRunToRunner(id2, (float)0.5 );
+        race.removeRunner(id2);
+        System.out.println(race.getFastestRunnerAvg());
+        race.removeRunner(id1);
+
+        race.addRunner(id1);
+
+
+
+
+    }
 
 
 

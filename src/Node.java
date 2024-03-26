@@ -94,17 +94,16 @@ public class Node<T extends RunnerID> {
             }
         }
         return this.key.isSmaller(other.getKey());
-
     }
 
     public Node<T> getMinSentinel(){
-        Node<T> minSentinel = new Node<>((T) Sentinel.getInstance1(), new Runner(Sentinel.getInstance1()));
+        Node<T> minSentinel = new Node<T>((T) Sentinel.getInstance1(), new Runner(Sentinel.getInstance1()));
         minSentinel.isMinSentinel = true;
         return minSentinel;
     }
 
     public Node<T> getMaxSentinel(){
-        Node<T> maxSentinel =  new Node<>((T) Sentinel.getInstance2(), new Runner(Sentinel.getInstance2()));
+        Node<T> maxSentinel =  new Node<T>((T) Sentinel.getInstance2(), new Runner(Sentinel.getInstance2()));
         maxSentinel.isMaxSentinel = true;
         return maxSentinel;
     }
